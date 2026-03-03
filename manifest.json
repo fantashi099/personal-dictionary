@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Personal Dictionary",
+  "version": "1.0.0",
+  "description": "Instantly save words, hear their pronunciations, and playfully memorize them.",
+  "action": {
+    "default_popup": "index.html"
+  },
+  "background": {
+    "service_worker": "src/background.ts",
+    "type": "module"
+  },
+  "permissions": ["storage", "contextMenus", "identity"],
+  "host_permissions": ["<all_urls>"]
+}

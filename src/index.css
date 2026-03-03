@@ -1,0 +1,21 @@
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+
+/* Custom styles for our extension popup */
+@theme {
+  --font-sans: "Inter", system-ui, sans-serif;
+  --color-primary: #3b82f6;
+  --color-primary-dark: #2563eb;
+  --color-success: #22c55e;
+  --color-danger: #ef4444;
+}
+
+body {
+  margin: 0;
+  width: 400px;
+  height: 600px;
+  font-family: var(--font-sans);
+  background-color: #f8fafc;
+  color: #0f172a;
+  overflow: hidden;
+}
