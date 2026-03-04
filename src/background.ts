@@ -27,11 +27,38 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
             const definition = entry.meanings[0]?.definitions[0]?.definition || "No definition found";
             const audioUrl = entry.phonetics.find((p: { audio?: string }) => p.audio)?.audio || "";
 
+            let phoneticUK = "";
+            let phoneticUS = "";
+
+            if (entry.phonetics && Array.isArray(entry.phonetics)) {
+                entry.phonetics.forEach((p: { text?: string, audio?: string }) => {
+                    if (p.text && p.audio) {
+                        if (p.audio.includes('-uk')) phoneticUK = p.text;
+                        if (p.audio.includes('-us')) phoneticUS = p.text;
+                    } else if (p.text && !p.audio && !phoneticUK && !phoneticUS) {
+                        // Sometimes the API provides text without audio marking UK/US
+                        // We will just use it as a fallback later
+                    }
+                });
+            }
+
+            // Fallback to general phonetic if specific ones not found
+            if (!phoneticUK && !phoneticUS && entry.phonetic) {
+                phoneticUK = entry.phonetic;
+                phoneticUS = entry.phonetic;
+            } else if (!phoneticUK && phoneticUS) {
+                phoneticUK = phoneticUS;
+            } else if (!phoneticUS && phoneticUK) {
+                phoneticUS = phoneticUK;
+            }
+
             const newWord = {
                 id: Date.now().toString(),
                 word,
                 definition,
                 audioUrl,
+                phoneticUK,
+                phoneticUS,
                 createdAt: Date.now()
             };
 

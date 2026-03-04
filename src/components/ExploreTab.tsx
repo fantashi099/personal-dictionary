@@ -30,10 +30,16 @@ export function ExploreTab() {
                     className="p-5 border-b border-ink flex justify-between items-start hover:bg-paper-dim transition-colors duration-200 ease-out @container/entry"
                 >
                     <div className="flex-1 pr-4">
-                        <h3 className="font-serif text-3xl font-bold text-ink tracking-tight leading-none mb-2 capitalize">
+                        <h3 className="font-serif text-3xl font-bold text-ink tracking-tight leading-none capitalize">
                             {wordInfo.word}
                         </h3>
-                        <p className="font-sans text-tiny uppercase tracking-[0.15em] text-ink/70 leading-relaxed">
+                        {(wordInfo.phoneticUK || wordInfo.phoneticUS) ? (
+                            <div className="flex gap-3 mt-1.5 mb-3">
+                                {wordInfo.phoneticUK && <span className="font-sans text-xs text-ink/60 font-medium tracking-wide">UK <span className="text-ink/40 font-serif lowercase italic tracking-normal">{wordInfo.phoneticUK}</span></span>}
+                                {wordInfo.phoneticUS && <span className="font-sans text-xs text-ink/60 font-medium tracking-wide">US <span className="text-ink/40 font-serif lowercase italic tracking-normal">{wordInfo.phoneticUS}</span></span>}
+                            </div>
+                        ) : null}
+                        <p className={`font-sans text-tiny uppercase tracking-[0.15em] text-ink/70 leading-relaxed ${!(wordInfo.phoneticUK || wordInfo.phoneticUS) ? 'mt-3' : ''}`}>
                             {wordInfo.definition}
                         </p>
                     </div>

@@ -8,6 +8,8 @@ export interface WordEntry {
     word: string;
     definition: string;
     audioUrl: string;
+    phoneticUK?: string;
+    phoneticUS?: string;
     createdAt: number;
 }
 
