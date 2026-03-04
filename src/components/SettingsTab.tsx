@@ -1,5 +1,6 @@
 import { useDictionaryStore } from '../lib/store';
-import { auth, googleProvider, signInWithPopup, signOut } from '../lib/firebase';
+import { auth, signInWithCredential, signOut } from '../lib/firebase';
+import { GoogleAuthProvider } from 'firebase/auth';
 import { LogIn, LogOut, Loader2, Cloud } from 'lucide-react';
 
 export function SettingsTab() {
@@ -7,12 +8,26 @@ export function SettingsTab() {
     const loading = useDictionaryStore(state => state.loading);
 
     const handleSignIn = async () => {
-        if (!auth) return alert("Firebase not configured yet.");
-        try {
-            await signInWithPopup(auth, googleProvider);
-        } catch (err) {
-            console.error(err);
-        }
+        const currentAuth = auth;
+        if (!currentAuth) return alert("Firebase not configured yet.");
+
+        chrome.identity.getAuthToken({ interactive: true }, async (tokenResponse: any) => {
+            const token = tokenResponse?.token || tokenResponse;
+            if (chrome.runtime.lastError || !token) {
+                console.error("Chrome Identity Error:", chrome.runtime.lastError);
+                alert("Authentication failed! Ensure your manifest.json has a valid oauth2 client_id configured from Google Cloud Console.");
+                return;
+            }
+
+            try {
+                // Pass the Chrome access token to Firebase
+                const credential = GoogleAuthProvider.credential(null, token);
+                await signInWithCredential(currentAuth, credential);
+            } catch (err) {
+                console.error("Firebase auth error:", err);
+                alert("Firebase auth failed: " + (err as Error).message);
+            }
+        });
     };
 
     const handleSignOut = async () => {
