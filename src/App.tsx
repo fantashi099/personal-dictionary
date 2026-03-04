@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { BookOpen, Gamepad2, Settings } from 'lucide-react';
 import { ExploreTab } from './components/ExploreTab';
 import { PracticeTab } from './components/PracticeTab';
 import { SettingsTab } from './components/SettingsTab';
@@ -28,24 +27,21 @@ function App() {
   }, [setUser, loadWords]);
 
   return (
-    <div className="flex flex-col h-screen w-full bg-slate-50 overflow-hidden relative selection:bg-blue-100 selection:text-blue-900">
+    <div className="flex flex-col h-screen w-full bg-[#fafafa] overflow-hidden relative selection:bg-black selection:text-white">
 
       {/* Header */}
-      <header className="bg-white px-5 py-4 flex items-center justify-between border-b border-slate-100 shadow-sm z-10 shrink-0">
-        <div className="flex items-center gap-2 text-blue-600">
-          <BookOpen size={24} />
-          <h1 className="font-extrabold text-xl tracking-tight text-slate-800">My Dictionary</h1>
-        </div>
+      <header className="bg-[#fafafa] px-5 py-4 flex items-center justify-between border-b border-black z-10 shrink-0">
+        <h1 className="font-serif font-black text-3xl tracking-tighter uppercase text-black">Index</h1>
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 overflow-hidden relative bg-slate-50">
+      <main className="flex-1 overflow-hidden relative bg-[#fafafa]">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -10 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
             className="h-full absolute inset-0"
           >
@@ -57,38 +53,35 @@ function App() {
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="bg-white border-t border-slate-100 flex items-center justify-around pb-4 pt-3 px-2 z-10 shrink-0 absolute bottom-0 w-full shadow-[0_-4px_24px_rgba(0,0,0,0.02)]">
+      <nav className="bg-[#fafafa] border-t border-black flex items-center justify-around z-10 shrink-0 absolute bottom-0 w-full h-14">
         <button
           onClick={() => setActiveTab('explore')}
           className={clsx(
-            "flex flex-col items-center gap-1.5 p-2 rounded-xl transition-all flex-1",
-            activeTab === 'explore' ? "text-blue-600 font-bold" : "text-slate-400 hover:text-slate-600 font-medium"
+            "flex items-center justify-center h-full transition-all flex-1 border-r border-black last:border-r-0",
+            activeTab === 'explore' ? "bg-black text-white" : "text-black hover:bg-gray-200"
           )}
         >
-          <BookOpen size={22} className={activeTab === 'explore' ? "fill-blue-50" : ""} />
-          <span className="text-[10px] tracking-wider uppercase">Explore</span>
+          <span className="font-sans text-[11px] font-bold tracking-[0.2em] uppercase">Words</span>
         </button>
 
         <button
           onClick={() => setActiveTab('practice')}
           className={clsx(
-            "flex flex-col items-center gap-1.5 p-2 rounded-xl transition-all flex-1",
-            activeTab === 'practice' ? "text-orange-500 font-bold" : "text-slate-400 hover:text-slate-600 font-medium"
+            "flex items-center justify-center h-full transition-all flex-1 border-r border-black last:border-r-0",
+            activeTab === 'practice' ? "bg-black text-white" : "text-black hover:bg-gray-200"
           )}
         >
-          <Gamepad2 size={24} className={activeTab === 'practice' ? "fill-orange-50" : ""} />
-          <span className="text-[10px] tracking-wider uppercase">Practice</span>
+          <span className="font-sans text-[11px] font-bold tracking-[0.2em] uppercase">Test</span>
         </button>
 
         <button
           onClick={() => setActiveTab('settings')}
           className={clsx(
-            "flex flex-col items-center gap-1.5 p-2 rounded-xl transition-all flex-1",
-            activeTab === 'settings' ? "text-slate-800 font-bold" : "text-slate-400 hover:text-slate-600 font-medium"
+            "flex items-center justify-center h-full transition-all flex-1",
+            activeTab === 'settings' ? "bg-black text-white" : "text-black hover:bg-gray-200"
           )}
         >
-          <Settings size={22} />
-          <span className="text-[10px] tracking-wider uppercase">Sync</span>
+          <span className="font-sans text-[11px] font-bold tracking-[0.2em] uppercase">Sync</span>
         </button>
       </nav>
 

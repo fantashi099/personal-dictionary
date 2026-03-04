@@ -1,13 +1,13 @@
 @import "tailwindcss";
-@plugin "tailwindcss-animate";
 
 /* Custom styles for our extension popup */
 @theme {
+  --font-serif: "Playfair Display", Georgia, serif;
   --font-sans: "Inter", system-ui, sans-serif;
-  --color-primary: #3b82f6;
-  --color-primary-dark: #2563eb;
-  --color-success: #22c55e;
-  --color-danger: #ef4444;
+  --color-primary: #111111;
+  --color-primary-dark: #000000;
+  --color-success: #111111;
+  --color-danger: #111111;
 }
 
 body {
@@ -15,7 +15,26 @@ body {
   width: 400px;
   height: 600px;
   font-family: var(--font-sans);
-  background-color: #f8fafc;
-  color: #0f172a;
+  background-color: #fafafa;
+  color: #111111;
   overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom minimal scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #fafafa;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #111111;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #000;
 }

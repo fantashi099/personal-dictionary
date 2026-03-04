@@ -1,5 +1,4 @@
 import { useDictionaryStore } from '../lib/store';
-import { Play } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export function ExploreTab() {
@@ -13,38 +12,38 @@ export function ExploreTab() {
 
     if (words.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center p-8 text-center h-full text-slate-500">
-                <p>No words saved yet.</p>
-                <p className="text-sm mt-2">Highlight a word and right-click to save it to your dictionary!</p>
+            <div className="flex flex-col items-center justify-center p-8 text-center h-full text-black">
+                <p className="font-serif italic text-xl">No words documented</p>
+                <p className="font-sans text-xs uppercase tracking-widest mt-4 text-[#555]">Highlight & save from context menu</p>
             </div>
         );
     }
 
     return (
-        <div className="flex flex-col gap-3 p-4 overflow-y-auto h-full pb-24">
+        <div className="flex flex-col overflow-y-auto h-full pb-20">
             {words.map((wordInfo, index) => (
                 <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
                     transition={{ delay: index * 0.05 }}
                     key={wordInfo.id}
-                    className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex justify-between items-start"
+                    className="p-5 border-b border-black flex justify-between items-start hover:bg-white transition-colors"
                 >
-                    <div className="flex-1">
-                        <h3 className="font-bold text-lg text-slate-800 capitalize leading-tight">
+                    <div className="flex-1 pr-4">
+                        <h3 className="font-serif text-3xl font-bold text-black tracking-tight leading-none mb-2 capitalize">
                             {wordInfo.word}
                         </h3>
-                        <p className="text-sm text-slate-600 mt-1 leading-relaxed">
+                        <p className="font-sans text-[11px] uppercase tracking-[0.15em] text-[#555] leading-relaxed">
                             {wordInfo.definition}
                         </p>
                     </div>
                     {wordInfo.audioUrl && (
                         <button
                             onClick={() => playAudio(wordInfo.audioUrl)}
-                            className="ml-3 p-2 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors shrink-0"
+                            className="font-sans text-[10px] font-bold tracking-[0.2em] uppercase border border-black px-3 py-1.5 hover:bg-black hover:text-white transition-colors shrink-0"
                             aria-label="Play pronunciation"
                         >
-                            <Play size={18} fill="currentColor" />
+                            Play
                         </button>
                     )}
                 </motion.div>

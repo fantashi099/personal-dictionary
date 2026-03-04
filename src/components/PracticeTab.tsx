@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useDictionaryStore } from '../lib/store';
 import type { WordEntry } from '../lib/store';
 import { motion } from 'framer-motion';
-import { Trophy, ArrowRight } from 'lucide-react';
 
 export function PracticeTab() {
     const words = useDictionaryStore(state => state.words);
@@ -39,11 +38,14 @@ export function PracticeTab() {
 
     if (words.length < 4) {
         return (
-            <div className="p-8 text-center text-slate-500 flex flex-col items-center justify-center h-full">
-                <Trophy size={48} className="text-slate-300 mb-4" />
-                <h2 className="text-xl font-bold text-slate-700 mb-2">Save More Words</h2>
-                <p className="text-sm">You need at least 4 words in your dictionary to play the game.</p>
-                <p className="font-semibold mt-2">{words.length} / 4</p>
+            <div className="p-8 text-center text-black flex flex-col items-center justify-center h-full">
+                <div className="w-16 h-16 border border-black flex items-center justify-center mb-6">
+                    <span className="font-serif text-3xl">{words.length}</span>
+                </div>
+                <h2 className="text-2xl font-serif italic text-black mb-2">Insufficient Entries</h2>
+                <p className="font-sans text-xs uppercase tracking-widest text-[#555]">
+                    Requires 4 entries minimum to commence testing.
+                </p>
             </div>
         );
     }
@@ -62,46 +64,48 @@ export function PracticeTab() {
     };
 
     return (
-        <div className="p-4 flex flex-col h-full bg-slate-50">
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="font-bold text-slate-700">Practice</h2>
-                <div className="flex items-center gap-1 bg-white px-3 py-1 rounded-full shadow-sm text-sm font-semibold text-orange-500">
-                    <Trophy size={16} /> Streak: {score}
+        <div className="flex flex-col h-full bg-[#fafafa]">
+            <div className="flex justify-between items-center p-5 border-b border-black shrink-0 bg-white">
+                <h2 className="font-serif italic text-lg text-black">Test Knowledge</h2>
+                <div className="font-sans text-[10px] font-bold tracking-[0.2em] uppercase text-black border border-black px-3 py-1">
+                    Streak {score}
                 </div>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex-1 flex flex-col relative overflow-hidden">
-                <h3 className="text-sm text-slate-500 font-medium uppercase tracking-wider mb-2">Definition</h3>
-                <p className="text-lg text-slate-800 leading-relaxed font-medium">
-                    "{currentQuestion.definition}"
-                </p>
+            <div className="flex-1 flex flex-col relative overflow-hidden p-6 pb-24">
+                <div className="mb-8 border border-black p-6 bg-white min-h-[160px] flex flex-col justify-center shadow-[4px_4px_0_0_#000]">
+                    <h3 className="text-[10px] text-[#555] font-bold uppercase tracking-[0.2em] mb-4 border-b border-black pb-2 inline-block self-start">Definition</h3>
+                    <p className="font-serif text-2xl text-black leading-snug">
+                        {currentQuestion.definition}
+                    </p>
+                </div>
 
-                <div className="mt-auto grid grid-cols-2 gap-3 pb-8">
+                <div className="grid grid-cols-1 gap-4 mt-auto z-10">
                     {options.map((opt, i) => {
                         const isSelected = selected === opt;
                         const isCorrect = opt === currentQuestion.word;
 
-                        let btnClass = "bg-slate-100 text-slate-700 hover:bg-slate-200 border-transparent";
+                        let btnClass = "bg-white text-black border-black hover:bg-black hover:text-white";
 
                         if (selected) {
                             if (isCorrect) {
-                                btnClass = "bg-green-100 text-green-700 border-green-300 shadow-sm";
+                                btnClass = "bg-green-500 text-black border-black shadow-[4px_4px_0_0_#000]";
                             } else if (isSelected && !isCorrect) {
-                                btnClass = "bg-red-100 text-red-700 border-red-300";
+                                btnClass = "bg-red-500 text-white border-black";
                             } else {
-                                btnClass = "bg-slate-50 text-slate-400 border-transparent opacity-50";
+                                btnClass = "bg-[#f5f5f5] text-[#999] border-[#e5e5e5]";
                             }
                         }
 
                         return (
                             <motion.button
                                 key={opt}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: i * 0.1 }}
                                 disabled={!!selected}
                                 onClick={() => handleSelect(opt)}
-                                className={`p-4 rounded-xl font-bold text-sm border-2 transition-all ${btnClass}`}
+                                className={`p-4 text-left font-sans text-sm font-bold tracking-widest uppercase border transition-all ${btnClass}`}
                             >
                                 {opt}
                             </motion.button>
@@ -111,15 +115,16 @@ export function PracticeTab() {
 
                 {selected && (
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="absolute bottom-4 left-0 right-0 flex justify-center"
+                        className="absolute bottom-6 left-6 right-6 flex justify-center z-20"
                     >
                         <button
                             onClick={generateQuestion}
-                            className="bg-blue-600 text-white px-6 py-2 rounded-full font-bold shadow-md hover:bg-blue-700 flex items-center gap-2"
+                            className="bg-black text-white px-8 py-4 font-sans text-xs font-bold tracking-[0.2em] uppercase hover:bg-white hover:text-black border border-black transition-colors w-full flex items-center justify-between"
                         >
-                            Next Round <ArrowRight size={18} />
+                            <span>Next Question</span>
+                            <span>→</span>
                         </button>
                     </motion.div>
                 )}

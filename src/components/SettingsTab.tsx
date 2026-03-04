@@ -1,7 +1,6 @@
 import { useDictionaryStore } from '../lib/store';
 import { auth, signInWithCredential, signOut } from '../lib/firebase';
 import { GoogleAuthProvider } from 'firebase/auth';
-import { LogIn, LogOut, Loader2, Cloud } from 'lucide-react';
 
 export function SettingsTab() {
     const user = useDictionaryStore(state => state.user);
@@ -20,7 +19,6 @@ export function SettingsTab() {
             }
 
             try {
-                // Pass the Chrome access token to Firebase
                 const credential = GoogleAuthProvider.credential(null, token);
                 await signInWithCredential(currentAuth, credential);
             } catch (err) {
@@ -40,50 +38,55 @@ export function SettingsTab() {
     };
 
     return (
-        <div className="flex flex-col h-full bg-slate-50 p-6">
-            <div className="flex items-center gap-3 mb-8 text-blue-600">
-                <Cloud size={32} />
-                <h2 className="text-2xl font-black tracking-tight text-slate-800">Sync Config</h2>
+        <div className="flex flex-col h-full bg-[#fafafa] p-6 overflow-y-auto pb-20">
+            <div className="mb-10 text-black border-b border-black pb-4">
+                <h2 className="font-serif text-3xl font-black tracking-tighter uppercase">Sync Strategy</h2>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 flex flex-col items-center text-center">
+            <div className="border border-black bg-white p-6 flex flex-col items-start shadow-[6px_6px_0_0_#000]">
                 {user ? (
                     <>
-                        <img
-                            src={user.photoURL}
-                            alt="Avatar"
-                            className="w-16 h-16 rounded-full mb-4 shadow-sm"
-                        />
-                        <h3 className="font-bold text-lg text-slate-800">{user.displayName}</h3>
-                        <p className="text-sm text-slate-500 mb-6">{user.email}</p>
+                        <div className="w-full border-b border-black pb-6 mb-6 flex items-end justify-between">
+                            <div>
+                                <h3 className="font-serif text-2xl font-bold text-black capitalize">{user.displayName}</h3>
+                                <p className="font-sans text-[10px] tracking-widest uppercase text-[#555] mt-1">{user.email}</p>
+                            </div>
+                            {user.photoURL && (
+                                <img
+                                    src={user.photoURL}
+                                    alt="Avatar"
+                                    className="w-12 h-12 grayscale border border-black"
+                                />
+                            )}
+                        </div>
+
+                        <p className="font-sans text-[10px] tracking-widest uppercase text-black leading-relaxed mb-8">
+                            Status: <span className="text-green-600 font-bold ml-1">✓ Authenticated</span><br /><br />
+                            Data flows actively across devices.
+                        </p>
 
                         <button
                             onClick={handleSignOut}
-                            className="flex items-center gap-2 px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full font-semibold transition-colors w-full justify-center"
+                            className="font-sans text-[10px] font-bold tracking-[0.2em] uppercase border border-black bg-white text-black hover:bg-black hover:text-white transition-colors w-full py-3.5 text-center"
                         >
-                            <LogOut size={18} /> Sign Out
+                            Terminate Session
                         </button>
-                        <p className="text-xs text-slate-400 mt-4 leading-relaxed">
-                            Your words are safely synced to the cloud. You can access them on any device by logging in.
-                        </p>
                     </>
                 ) : (
                     <>
-                        <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-                            <Cloud size={24} className="text-slate-400" />
+                        <div className="w-full border-b border-black pb-6 mb-6">
+                            <h3 className="font-serif italic text-2xl text-black">Identity Protocol</h3>
                         </div>
-                        <h3 className="font-bold text-lg text-slate-800 mb-2">Sync Across Devices</h3>
-                        <p className="text-sm text-slate-500 mb-6 leading-relaxed">
-                            Sign in with your Google account to automatically sync your personal dictionary across all your laptops.
+                        <p className="font-sans text-[10px] tracking-[0.15em] uppercase text-[#555] leading-loose mb-8">
+                            Establish persistent connection across local clients. Unauthenticated sessions rely on ephemeral block storage.
                         </p>
 
                         <button
                             onClick={handleSignIn}
                             disabled={loading}
-                            className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold shadow-md transition-all w-full"
+                            className="font-sans text-[10px] font-bold tracking-[0.2em] uppercase border border-black bg-black text-white hover:bg-white hover:text-black transition-colors w-full py-3.5 text-center disabled:opacity-50"
                         >
-                            {loading ? <Loader2 className="animate-spin" size={20} /> : <LogIn size={20} />}
-                            Sign in with Google
+                            {loading ? "Authenticating..." : "Initialize via Google"}
                         </button>
                     </>
                 )}
