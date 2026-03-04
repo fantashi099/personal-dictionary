@@ -38,12 +38,12 @@ export function PracticeTab() {
 
     if (words.length < 4) {
         return (
-            <div className="p-8 text-center text-black flex flex-col items-center justify-center h-full">
-                <div className="w-16 h-16 border border-black flex items-center justify-center mb-6">
+            <div className="p-8 text-center text-ink flex flex-col items-center justify-center h-full">
+                <div className="w-16 h-16 border border-ink flex items-center justify-center mb-6">
                     <span className="font-serif text-3xl">{words.length}</span>
                 </div>
-                <h2 className="text-2xl font-serif italic text-black mb-2">Insufficient Entries</h2>
-                <p className="font-sans text-xs uppercase tracking-widest text-[#555]">
+                <h2 className="text-2xl font-serif italic text-ink mb-2">Insufficient Entries</h2>
+                <p className="font-sans text-xs uppercase tracking-widest opacity-60">
                     Requires 4 entries minimum to commence testing.
                 </p>
             </div>
@@ -64,36 +64,36 @@ export function PracticeTab() {
     };
 
     return (
-        <div className="flex flex-col h-full bg-[#fafafa]">
-            <div className="flex justify-between items-center p-5 border-b border-black shrink-0 bg-white">
-                <h2 className="font-serif italic text-lg text-black">Test Knowledge</h2>
-                <div className="font-sans text-[10px] font-bold tracking-[0.2em] uppercase text-black border border-black px-3 py-1">
+        <div className="flex flex-col h-full bg-paper">
+            <div className="flex justify-between items-center p-5 border-b border-ink shrink-0 bg-paper-dim">
+                <h2 className="font-serif italic text-lg text-ink">Test Knowledge</h2>
+                <div className="font-sans text-micro font-bold tracking-[0.2em] uppercase text-ink border border-ink px-3 py-1">
                     Streak {score}
                 </div>
             </div>
 
-            <div className="flex-1 flex flex-col relative overflow-hidden p-6 pb-24">
-                <div className="mb-8 border border-black p-6 bg-white min-h-[160px] flex flex-col justify-center shadow-[4px_4px_0_0_#000]">
-                    <h3 className="text-[10px] text-[#555] font-bold uppercase tracking-[0.2em] mb-4 border-b border-black pb-2 inline-block self-start">Definition</h3>
-                    <p className="font-serif text-2xl text-black leading-snug">
+            <div className="flex-1 flex flex-col relative overflow-y-auto overflow-x-hidden p-5 pb-24">
+                <div className="mb-5 border border-ink p-5 bg-paper-dim min-h-[120px] flex flex-col justify-center shadow-brutal shrink-0">
+                    <h3 className="text-micro text-ink/60 font-bold uppercase tracking-[0.2em] mb-4 border-b border-ink/30 pb-2 inline-block self-start">Definition</h3>
+                    <p className="font-serif text-xl text-ink leading-snug">
                         {currentQuestion.definition}
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 mt-auto z-10">
+                <div className="grid grid-cols-1 gap-3 mt-auto z-10 shrink-0">
                     {options.map((opt, i) => {
                         const isSelected = selected === opt;
                         const isCorrect = opt === currentQuestion.word;
 
-                        let btnClass = "bg-white text-black border-black hover:bg-black hover:text-white";
+                        let btnClass = "bg-paper text-ink border-ink hover:bg-ink hover:text-paper";
 
                         if (selected) {
                             if (isCorrect) {
-                                btnClass = "bg-green-500 text-black border-black shadow-[4px_4px_0_0_#000]";
+                                btnClass = "bg-success text-paper border-ink shadow-brutal";
                             } else if (isSelected && !isCorrect) {
-                                btnClass = "bg-red-500 text-white border-black";
+                                btnClass = "bg-danger text-paper border-ink";
                             } else {
-                                btnClass = "bg-[#f5f5f5] text-[#999] border-[#e5e5e5]";
+                                btnClass = "bg-paper-dim border-ink/20 text-ink/40";
                             }
                         }
 
@@ -105,7 +105,7 @@ export function PracticeTab() {
                                 transition={{ delay: i * 0.1 }}
                                 disabled={!!selected}
                                 onClick={() => handleSelect(opt)}
-                                className={`p-4 text-left font-sans text-sm font-bold tracking-widest uppercase border transition-all ${btnClass}`}
+                                className={`p-3 text-left font-sans text-sm font-bold tracking-widest uppercase border transition-all duration-200 ease-out ${btnClass}`}
                             >
                                 {opt}
                             </motion.button>
@@ -117,11 +117,11 @@ export function PracticeTab() {
                     <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="absolute bottom-6 left-6 right-6 flex justify-center z-20"
+                        className="absolute bottom-5 left-5 right-5 flex justify-center z-20"
                     >
                         <button
                             onClick={generateQuestion}
-                            className="bg-black text-white px-8 py-4 font-sans text-xs font-bold tracking-[0.2em] uppercase hover:bg-white hover:text-black border border-black transition-colors w-full flex items-center justify-between"
+                            className="bg-ink text-paper px-6 py-4 font-sans text-xs font-bold tracking-[0.2em] uppercase hover:bg-paper hover:text-ink border border-ink transition-colors duration-200 ease-out w-full flex items-center justify-between"
                         >
                             <span>Next Question</span>
                             <span>→</span>

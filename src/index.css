@@ -4,10 +4,30 @@
 @theme {
   --font-serif: "Playfair Display", Georgia, serif;
   --font-sans: "Inter", system-ui, sans-serif;
-  --color-primary: #111111;
-  --color-primary-dark: #000000;
-  --color-success: #111111;
-  --color-danger: #111111;
+
+  /* OKLCH Colors for a premium editorial look */
+  --color-ink: oklch(0.15 0.02 240);
+  --color-black: oklch(0 0 0);
+  --color-paper: oklch(0.98 0.01 75);
+  --color-paper-dim: oklch(0.95 0.01 75);
+  --color-paper-dimmer: oklch(0.92 0.01 75);
+
+  /* Feedback colors re-imagined for editorial */
+  --color-success: oklch(0.6 0.15 150);
+  /* Desaturated green */
+  --color-danger: oklch(0.55 0.2 25);
+  /* Desaturated red */
+
+  /* Semantic aliases */
+  --color-primary: var(--color-ink);
+
+  /* Custom typography sizes to eliminate arbitrary values */
+  --text-micro: 10px;
+  --text-tiny: 11px;
+
+  /* Brutalist Shadows */
+  --shadow-brutal: 4px 4px 0 0 var(--color-ink);
+  --shadow-brutal-lg: 6px 6px 0 0 var(--color-ink);
 }
 
 body {
@@ -15,8 +35,8 @@ body {
   width: 400px;
   height: 600px;
   font-family: var(--font-sans);
-  background-color: #fafafa;
-  color: #111111;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -28,13 +48,13 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #fafafa;
+  background: var(--color-paper);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #111111;
+  background: var(--color-ink);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #000;
+  background: var(--color-black);
 }

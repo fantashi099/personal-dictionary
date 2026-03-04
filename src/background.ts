@@ -8,7 +8,7 @@ chrome.runtime.onInstalled.addListener(() => {
     });
 });
 
-chrome.contextMenus.onClicked.addListener(async (info, _tab) => {
+chrome.contextMenus.onClicked.addListener(async (info) => {
     if (info.menuItemId === "save-to-personal-dictionary" && info.selectionText) {
         const word = info.selectionText.trim().toLowerCase();
         if (!word) return;
@@ -25,7 +25,7 @@ chrome.contextMenus.onClicked.addListener(async (info, _tab) => {
 
             const entry = data[0];
             const definition = entry.meanings[0]?.definitions[0]?.definition || "No definition found";
-            const audioUrl = entry.phonetics.find((p: any) => p.audio)?.audio || "";
+            const audioUrl = entry.phonetics.find((p: { audio?: string }) => p.audio)?.audio || "";
 
             const newWord = {
                 id: Date.now().toString(),
@@ -37,9 +37,9 @@ chrome.contextMenus.onClicked.addListener(async (info, _tab) => {
 
             // 2. Save to Chrome Local Storage (which will sync to Zustand when popup opens)
             chrome.storage.local.get("words", (result) => {
-                const words: any[] = (result.words as any[]) || [];
+                const words: { word: string }[] = (result.words as { word: string }[]) || [];
                 // Check if word already exists
-                if (!words.find((w: any) => w.word === word)) {
+                if (!words.find((w) => w.word === word)) {
                     words.unshift(newWord);
                     chrome.storage.local.set({ words });
                     console.log("Saved word successfully!", newWord);

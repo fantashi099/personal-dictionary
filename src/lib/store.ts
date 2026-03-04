@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { db } from './firebase';
 import { collection, getDocs, query, orderBy, setDoc, doc } from 'firebase/firestore';
+import type { User } from 'firebase/auth';
 
 export interface WordEntry {
     id: string;
@@ -12,9 +13,9 @@ export interface WordEntry {
 
 interface DictionaryState {
     words: WordEntry[];
-    user: any | null;
+    user: User | null;
     loading: boolean;
-    setUser: (user: any | null) => void;
+    setUser: (user: User | null) => void;
     loadWords: () => Promise<void>;
     addWord: (word: WordEntry) => Promise<void>;
 }

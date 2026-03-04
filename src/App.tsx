@@ -27,22 +27,22 @@ function App() {
   }, [setUser, loadWords]);
 
   return (
-    <div className="flex flex-col h-screen w-full bg-[#fafafa] overflow-hidden relative selection:bg-black selection:text-white">
+    <div className="flex flex-col h-screen w-full bg-paper overflow-hidden relative selection:bg-black selection:text-white">
 
       {/* Header */}
-      <header className="bg-[#fafafa] px-5 py-4 flex items-center justify-between border-b border-black z-10 shrink-0">
-        <h1 className="font-serif font-black text-3xl tracking-tighter uppercase text-black">Index</h1>
+      <header className="bg-paper px-5 py-4 flex items-center justify-between border-b border-ink z-10 shrink-0">
+        <h1 className="font-serif font-black text-3xl tracking-tighter uppercase text-ink">Index</h1>
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 overflow-hidden relative bg-[#fafafa]">
+      <main className="flex-1 overflow-hidden relative bg-paper @container">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
             className="h-full absolute inset-0"
           >
             {activeTab === 'explore' && <ExploreTab />}
@@ -53,35 +53,35 @@ function App() {
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="bg-[#fafafa] border-t border-black flex items-center justify-around z-10 shrink-0 absolute bottom-0 w-full h-14">
+      <nav className="bg-paper border-t border-ink flex items-center justify-around z-10 shrink-0 absolute bottom-0 w-full h-14">
         <button
           onClick={() => setActiveTab('explore')}
           className={clsx(
-            "flex items-center justify-center h-full transition-all flex-1 border-r border-black last:border-r-0",
-            activeTab === 'explore' ? "bg-black text-white" : "text-black hover:bg-gray-200"
+            "flex items-center justify-center h-full transition-colors duration-200 ease-out flex-1 border-r border-ink last:border-r-0",
+            activeTab === 'explore' ? "bg-ink text-paper" : "text-ink hover:bg-paper-dim"
           )}
         >
-          <span className="font-sans text-[11px] font-bold tracking-[0.2em] uppercase">Words</span>
+          <span className="font-sans text-tiny font-bold tracking-[0.2em] uppercase">Words</span>
         </button>
 
         <button
           onClick={() => setActiveTab('practice')}
           className={clsx(
-            "flex items-center justify-center h-full transition-all flex-1 border-r border-black last:border-r-0",
-            activeTab === 'practice' ? "bg-black text-white" : "text-black hover:bg-gray-200"
+            "flex items-center justify-center h-full transition-colors duration-200 ease-out flex-1 border-r border-ink last:border-r-0",
+            activeTab === 'practice' ? "bg-ink text-paper" : "text-ink hover:bg-paper-dim"
           )}
         >
-          <span className="font-sans text-[11px] font-bold tracking-[0.2em] uppercase">Test</span>
+          <span className="font-sans text-tiny font-bold tracking-[0.2em] uppercase">Test</span>
         </button>
 
         <button
           onClick={() => setActiveTab('settings')}
           className={clsx(
-            "flex items-center justify-center h-full transition-all flex-1",
-            activeTab === 'settings' ? "bg-black text-white" : "text-black hover:bg-gray-200"
+            "flex items-center justify-center h-full transition-colors duration-200 ease-out flex-1",
+            activeTab === 'settings' ? "bg-ink text-paper" : "text-ink hover:bg-paper-dim"
           )}
         >
-          <span className="font-sans text-[11px] font-bold tracking-[0.2em] uppercase">Sync</span>
+          <span className="font-sans text-tiny font-bold tracking-[0.2em] uppercase">Sync</span>
         </button>
       </nav>
 
