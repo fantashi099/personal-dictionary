@@ -12,6 +12,7 @@ const SORT_OPTIONS: { mode: SortMode; label: string; Icon: typeof ArrowDownAZ }[
 
 export function ExploreTab() {
     const words = useDictionaryStore(state => state.words);
+    const loading = useDictionaryStore(state => state.loading);
     const deleteWord = useDictionaryStore(state => state.deleteWord);
     const [sortMode, setSortMode] = useState<SortMode>('latest');
     const [shuffledIds, setShuffledIds] = useState<string[]>([]);
@@ -49,6 +50,21 @@ export function ExploreTab() {
         }
         setSortMode(mode);
     };
+
+    // Show skeleton while loading cached words
+    if (loading && words.length === 0) {
+        return (
+            <div className="flex flex-col h-full bg-paper">
+                {[1, 2, 3].map((i) => (
+                    <div key={i} className="px-5 py-4 border-b border-ink/10 animate-pulse">
+                        <div className="h-7 w-32 bg-ink/10 rounded mb-2" />
+                        <div className="h-3 w-20 bg-ink/5 rounded mb-3" />
+                        <div className="h-3 w-full bg-ink/5 rounded" />
+                    </div>
+                ))}
+            </div>
+        );
+    }
 
     if (words.length === 0) {
         return (

@@ -23,111 +23,120 @@ interface DictionaryState {
     deleteWord: (id: string) => Promise<void>;
 }
 
-export const useDictionaryStore = create<DictionaryState>((set, get) => ({
-    words: [],
-    user: null,
-    loading: false,
+export const useDictionaryStore = create<DictionaryState>((set, get) => {
+    // Cache-first: immediately load words from local storage on store creation
+    // so the UI shows cached content instead of "No words yet"
+    chrome.storage.local.get("words", (result) => {
+        const cached = (result.words as WordEntry[]) || [];
+        set({ words: cached, loading: false });
+    });
 
-    setUser: (user) => {
-        set({ user });
-        if (user) {
-            get().loadWords();
-        } else {
-            // Load from local storage if not logged in
-            chrome.storage.local.get("words", (result) => {
-                set({ words: (result.words as WordEntry[]) || [] });
-            });
-        }
-    },
+    return {
+        words: [],
+        user: null,
+        loading: true, // Start true — we're loading cached words
 
-    loadWords: async () => {
-        set({ loading: true });
-        try {
+        setUser: (user) => {
+            set({ user });
+            if (user) {
+                get().loadWords();
+            } else {
+                // Load from local storage if not logged in
+                chrome.storage.local.get("words", (result) => {
+                    set({ words: (result.words as WordEntry[]) || [] });
+                });
+            }
+        },
+
+        loadWords: async () => {
+            set({ loading: true });
+            try {
+                const user = get().user;
+                const db = getDb();
+                if (user && db) {
+                    const q = query(
+                        collection(db, `users/${user.uid}/words`),
+                        orderBy('createdAt', 'desc')
+                    );
+                    const snapshot = await getDocs(q);
+                    const firestoreWords = snapshot.docs.map(docSnapshot => docSnapshot.data() as WordEntry);
+
+                    // Sync local storage -> Firestore (if there are local words not in Firestore)
+                    chrome.storage.local.get("words", async (result) => {
+                        const localWords = (result.words as WordEntry[]) || [];
+                        const firestoreWordIds = new Set(firestoreWords.map(w => w.word));
+
+                        let updated = false;
+                        for (const lw of localWords) {
+                            if (!firestoreWordIds.has(lw.word)) {
+                                await setDoc(doc(db, `users/${user.uid}/words`, lw.id), lw);
+                                firestoreWords.unshift(lw);
+                                updated = true;
+                            }
+                        }
+
+                        if (updated) {
+                            firestoreWords.sort((a, b) => b.createdAt - a.createdAt);
+                        }
+
+                        set({ words: firestoreWords, loading: false });
+                        chrome.storage.local.set({ words: firestoreWords });
+                    });
+                } else {
+                    // Just local storage
+                    chrome.storage.local.get("words", (result) => {
+                        set({ words: (result.words as WordEntry[]) || [], loading: false });
+                    });
+                }
+            } catch (error) {
+                console.error("Failed to load words", error);
+                set({ loading: false });
+            }
+        },
+
+        addWord: async (word: WordEntry) => {
             const user = get().user;
+
+            // 1. Add locally
+            const currentWords = get().words;
+            if (currentWords.find(w => w.word === word.word)) return;
+
+            const newWords = [word, ...currentWords];
+            set({ words: newWords });
+            chrome.storage.local.set({ words: newWords });
+
+            // 2. Add to Firestore if logged in
             const db = getDb();
             if (user && db) {
-                const q = query(
-                    collection(db, `users/${user.uid}/words`),
-                    orderBy('createdAt', 'desc')
-                );
-                const snapshot = await getDocs(q);
-                const firestoreWords = snapshot.docs.map(docSnapshot => docSnapshot.data() as WordEntry);
-
-                // Sync local storage -> Firestore (if there are local words not in Firestore)
-                chrome.storage.local.get("words", async (result) => {
-                    const localWords = (result.words as WordEntry[]) || [];
-                    const firestoreWordIds = new Set(firestoreWords.map(w => w.word));
-
-                    let updated = false;
-                    for (const lw of localWords) {
-                        if (!firestoreWordIds.has(lw.word)) {
-                            await setDoc(doc(db, `users/${user.uid}/words`, lw.id), lw);
-                            firestoreWords.unshift(lw);
-                            updated = true;
-                        }
-                    }
-
-                    if (updated) {
-                        firestoreWords.sort((a, b) => b.createdAt - a.createdAt);
-                    }
-
-                    set({ words: firestoreWords, loading: false });
-                    chrome.storage.local.set({ words: firestoreWords });
-                });
-            } else {
-                // Just local storage
-                chrome.storage.local.get("words", (result) => {
-                    set({ words: (result.words as WordEntry[]) || [], loading: false });
-                });
+                try {
+                    await setDoc(doc(db, `users/${user.uid}/words`, word.id), word);
+                } catch (error) {
+                    console.error("Error saving to Firestore:", error);
+                }
             }
-        } catch (error) {
-            console.error("Failed to load words", error);
-            set({ loading: false });
-        }
-    },
+        },
 
-    addWord: async (word: WordEntry) => {
-        const user = get().user;
+        deleteWord: async (id: string) => {
+            const user = get().user;
 
-        // 1. Add locally
-        const currentWords = get().words;
-        if (currentWords.find(w => w.word === word.word)) return;
+            // 1. Remove locally
+            const currentWords = get().words;
+            const newWords = currentWords.filter(w => w.id !== id);
+            set({ words: newWords });
+            chrome.storage.local.set({ words: newWords });
 
-        const newWords = [word, ...currentWords];
-        set({ words: newWords });
-        chrome.storage.local.set({ words: newWords });
-
-        // 2. Add to Firestore if logged in
-        const db = getDb();
-        if (user && db) {
-            try {
-                await setDoc(doc(db, `users/${user.uid}/words`, word.id), word);
-            } catch (error) {
-                console.error("Error saving to Firestore:", error);
+            // 2. Remove from Firestore if logged in
+            const db = getDb();
+            if (user && db) {
+                try {
+                    await deleteDoc(doc(db, `users/${user.uid}/words`, id));
+                } catch (error) {
+                    console.error("Error deleting from Firestore:", error);
+                }
             }
         }
-    },
-
-    deleteWord: async (id: string) => {
-        const user = get().user;
-
-        // 1. Remove locally
-        const currentWords = get().words;
-        const newWords = currentWords.filter(w => w.id !== id);
-        set({ words: newWords });
-        chrome.storage.local.set({ words: newWords });
-
-        // 2. Remove from Firestore if logged in
-        const db = getDb();
-        if (user && db) {
-            try {
-                await deleteDoc(doc(db, `users/${user.uid}/words`, id));
-            } catch (error) {
-                console.error("Error deleting from Firestore:", error);
-            }
-        }
-    }
-}));
+    };
+});
 
 // Listen to local storage changes (if background script adds a word)
 chrome.storage.onChanged.addListener((changes, namespace) => {
