@@ -30,7 +30,8 @@
   "permissions": [
     "storage",
     "contextMenus",
-    "identity"
+    "identity",
+    "notifications"
   ],
   "host_permissions": [
     "https://api.dictionaryapi.dev/*"
