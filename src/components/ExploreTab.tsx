@@ -73,8 +73,8 @@ export function ExploreTab() {
                     <span className="font-serif text-4xl text-ink/20 italic">A</span>
                 </div>
                 <p className="font-serif italic text-xl text-ink">No words yet</p>
-                <p className="font-sans text-xs text-ink/40 mt-3 leading-relaxed max-w-[240px]">
-                    Highlight any word on a webpage, right-click, and choose <span className="font-semibold text-ink/60">"Save to Dictionary"</span>
+                <p className="font-sans text-[13px] text-ink/60 mt-3 leading-relaxed max-w-[240px]">
+                    Highlight any word on a webpage, right-click, and choose <span className="font-semibold text-ink">"Save to Dictionary"</span>
                 </p>
             </div>
         );
@@ -83,8 +83,8 @@ export function ExploreTab() {
     return (
         <div className="flex flex-col h-full bg-paper">
             {/* ── Sort Toolbar ── */}
-            <div className="flex items-center justify-between px-5 py-3 border-b border-ink/10 shrink-0 bg-paper">
-                <span className="font-sans text-[10px] tracking-[0.2em] uppercase text-ink/40 font-semibold">
+            <div className="flex items-center justify-between px-5 py-3 border-b border-ink/15 shrink-0 bg-paper">
+                <span className="font-sans text-[11px] tracking-[0.15em] uppercase text-ink/60 font-medium">
                     {words.length} {words.length === 1 ? 'word' : 'words'}
                 </span>
                 <div className="flex items-center bg-ink/[0.04] rounded-lg p-0.5 gap-0.5">
@@ -93,15 +93,15 @@ export function ExploreTab() {
                             key={mode}
                             onClick={() => handleSortChange(mode)}
                             className={`
-                                flex items-center gap-1 px-2 py-1 rounded font-sans text-[9px]
+                                flex items-center gap-1.5 px-2.5 py-1.5 rounded-md font-sans text-[10px]
                                 font-semibold tracking-wider uppercase transition-all duration-200
                                 ${sortMode === mode
                                     ? 'bg-ink text-paper shadow-sm'
-                                    : 'text-ink/50 hover:text-ink/80 hover:bg-ink/[0.06]'
+                                    : 'text-ink/60 hover:text-ink/90 hover:bg-ink/[0.06]'
                                 }
                             `}
                         >
-                            <Icon size={11} strokeWidth={2.5} />
+                            <Icon size={12} strokeWidth={2.5} />
                             {label}
                         </button>
                     ))}
@@ -119,59 +119,59 @@ export function ExploreTab() {
                         {/* Left accent line on hover */}
                         <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-ink scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-top" />
 
-                        <div className="flex items-start gap-4 px-5 py-4 border-b border-ink/10">
+                        <div className="flex items-start gap-4 px-5 py-4 border-b border-ink/15">
 
                             {/* Word content */}
                             <div className="flex-1 min-w-0">
-                                <h3 className="font-serif text-[26px] font-semibold text-ink tracking-[-0.01em] leading-[1.1] capitalize">
+                                <h3 className="font-serif text-[28px] font-semibold text-ink tracking-[-0.01em] leading-[1.1] capitalize">
                                     {wordInfo.word}
                                 </h3>
 
                                 {(wordInfo.phoneticUK || wordInfo.phoneticUS) && (
-                                    <div className="flex items-center gap-3 mt-1.5">
+                                    <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 mt-2">
                                         {wordInfo.phoneticUK && (
-                                            <span className="font-sans text-[10px] text-ink/40">
-                                                <span className="font-semibold tracking-wider uppercase text-ink/30 mr-1">uk</span>
-                                                <span className="font-serif italic text-[11px] text-ink/45">{wordInfo.phoneticUK}</span>
+                                            <span className="font-sans text-[11px] flex items-baseline">
+                                                <span className="font-medium tracking-wider uppercase text-ink/60 mr-1.5 text-[9px]">UK</span>
+                                                <span className="font-sans text-[12px] text-ink/80 tracking-wide">{wordInfo.phoneticUK}</span>
                                             </span>
                                         )}
                                         {wordInfo.phoneticUS && (
-                                            <span className="font-sans text-[10px] text-ink/40">
-                                                <span className="font-semibold tracking-wider uppercase text-ink/30 mr-1">us</span>
-                                                <span className="font-serif italic text-[11px] text-ink/45">{wordInfo.phoneticUS}</span>
+                                            <span className="font-sans text-[11px] flex items-baseline">
+                                                <span className="font-medium tracking-wider uppercase text-ink/60 mr-1.5 text-[9px]">US</span>
+                                                <span className="font-sans text-[12px] text-ink/80 tracking-wide">{wordInfo.phoneticUS}</span>
                                             </span>
                                         )}
                                     </div>
                                 )}
 
-                                <p className="font-sans text-[12px] text-ink/55 leading-[1.6] mt-2 tracking-[0.01em]">
+                                <p className="font-sans text-[13px] text-ink/80 leading-[1.6] mt-2.5 tracking-[0.01em]">
                                     {wordInfo.definition}
                                 </p>
                             </div>
 
                             {/* Actions */}
-                            <div className="flex items-center gap-1.5 shrink-0 pt-1.5 opacity-40 group-hover:opacity-100 transition-opacity duration-200">
+                            <div className="flex flex-col items-center gap-2 shrink-0 pt-1.5 opacity-60 group-hover:opacity-100 transition-opacity duration-200">
                                 {wordInfo.audioUrl && (
                                     <button
                                         onClick={() => playAudio(wordInfo.audioUrl)}
-                                        className="w-8 h-8 rounded-lg border border-ink/20 flex items-center justify-center
-                                                   text-ink/60 hover:bg-ink hover:text-paper hover:border-ink
-                                                   transition-all duration-200 active:scale-90"
+                                        className="w-9 h-9 rounded-lg border border-ink/30 flex items-center justify-center
+                                                   text-ink hover:bg-ink hover:text-paper hover:border-ink
+                                                   transition-all duration-200 active:scale-90 bg-paper"
                                         aria-label="Play pronunciation"
                                         title="Play pronunciation"
                                     >
-                                        <Volume2 size={14} strokeWidth={2} />
+                                        <Volume2 size={16} strokeWidth={2} />
                                     </button>
                                 )}
                                 <button
                                     onClick={(e) => handleDelete(e, wordInfo.id)}
-                                    className="w-8 h-8 rounded-lg border border-danger/20 flex items-center justify-center
-                                               text-danger/60 hover:bg-danger hover:text-paper hover:border-danger
-                                               transition-all duration-200 active:scale-90"
+                                    className="w-9 h-9 rounded-lg border border-danger/30 flex items-center justify-center
+                                               text-danger hover:bg-danger hover:text-paper hover:border-danger
+                                               transition-all duration-200 active:scale-90 bg-paper"
                                     aria-label="Delete word"
                                     title="Delete word"
                                 >
-                                    <Trash2 size={13} strokeWidth={2} />
+                                    <Trash2 size={15} strokeWidth={2} />
                                 </button>
                             </div>
                         </div>

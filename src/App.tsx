@@ -32,7 +32,7 @@ function App() {
 
       {/* Header */}
       <header className="bg-paper px-5 py-4 flex items-center justify-between border-b border-ink z-10 shrink-0">
-        <h1 className="font-serif font-black text-3xl tracking-tighter uppercase text-ink">Index</h1>
+        <h1 className="font-serif font-black text-3xl tracking-tighter uppercase text-ink">LEXICON</h1>
       </header>
 
       {/* Main Content Area */}
