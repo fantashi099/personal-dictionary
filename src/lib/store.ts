@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { db } from './firebase';
+import { getDb } from './firebase';
 import { collection, getDocs, query, orderBy, setDoc, doc, deleteDoc } from 'firebase/firestore';
 import type { User } from 'firebase/auth';
 
@@ -44,10 +44,10 @@ export const useDictionaryStore = create<DictionaryState>((set, get) => ({
         set({ loading: true });
         try {
             const user = get().user;
+            const db = getDb();
             if (user && db) {
-                // Assert db is not null because we checked it
                 const q = query(
-                    collection(db!, `users/${user.uid}/words`),
+                    collection(db, `users/${user.uid}/words`),
                     orderBy('createdAt', 'desc')
                 );
                 const snapshot = await getDocs(q);
@@ -61,7 +61,7 @@ export const useDictionaryStore = create<DictionaryState>((set, get) => ({
                     let updated = false;
                     for (const lw of localWords) {
                         if (!firestoreWordIds.has(lw.word)) {
-                            await setDoc(doc(db!, `users/${user.uid}/words`, lw.id), lw);
+                            await setDoc(doc(db, `users/${user.uid}/words`, lw.id), lw);
                             firestoreWords.unshift(lw);
                             updated = true;
                         }
@@ -98,9 +98,10 @@ export const useDictionaryStore = create<DictionaryState>((set, get) => ({
         chrome.storage.local.set({ words: newWords });
 
         // 2. Add to Firestore if logged in
+        const db = getDb();
         if (user && db) {
             try {
-                await setDoc(doc(db!, `users/${user.uid}/words`, word.id), word);
+                await setDoc(doc(db, `users/${user.uid}/words`, word.id), word);
             } catch (error) {
                 console.error("Error saving to Firestore:", error);
             }
@@ -117,9 +118,10 @@ export const useDictionaryStore = create<DictionaryState>((set, get) => ({
         chrome.storage.local.set({ words: newWords });
 
         // 2. Remove from Firestore if logged in
+        const db = getDb();
         if (user && db) {
             try {
-                await deleteDoc(doc(db!, `users/${user.uid}/words`, id));
+                await deleteDoc(doc(db, `users/${user.uid}/words`, id));
             } catch (error) {
                 console.error("Error deleting from Firestore:", error);
             }
@@ -138,6 +140,7 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
 
             // If user is logged in, sync new words to Firestore
             const user = store.user;
+            const db = getDb();
             if (user && db) {
                 store.loadWords();
             }

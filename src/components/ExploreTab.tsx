@@ -1,6 +1,5 @@
 import { useState, useMemo } from 'react';
 import { useDictionaryStore } from '../lib/store';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Volume2, Trash2, ArrowDownAZ, ArrowUpAZ, Shuffle } from 'lucide-react';
 
 type SortMode = 'latest' | 'oldest' | 'shuffle';
@@ -95,79 +94,73 @@ export function ExploreTab() {
 
             {/* ── Word List ── */}
             <div className="flex flex-col overflow-y-auto flex-1 pb-20 overflow-x-hidden">
-                <AnimatePresence mode="popLayout">
-                    {sortedWords.map((wordInfo) => (
-                        <motion.div
-                            layout
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.96, y: -4 }}
-                            transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
-                            key={wordInfo.id}
-                            className="group relative bg-paper hover:bg-paper-dim/60 transition-colors duration-200"
-                        >
-                            {/* Left accent line on hover */}
-                            <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-ink scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-top" />
+                {sortedWords.map((wordInfo, index) => (
+                    <div
+                        key={wordInfo.id}
+                        className="group relative bg-paper hover:bg-paper-dim/60 transition-colors duration-200 animate-slide-up"
+                        style={{ animationDelay: `${Math.min(index * 30, 300)}ms` }}
+                    >
+                        {/* Left accent line on hover */}
+                        <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-ink scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-top" />
 
-                            <div className="flex items-start gap-4 px-5 py-4 border-b border-ink/10">
+                        <div className="flex items-start gap-4 px-5 py-4 border-b border-ink/10">
 
-                                {/* Word content */}
-                                <div className="flex-1 min-w-0">
-                                    <h3 className="font-serif text-[26px] font-semibold text-ink tracking-[-0.01em] leading-[1.1] capitalize">
-                                        {wordInfo.word}
-                                    </h3>
+                            {/* Word content */}
+                            <div className="flex-1 min-w-0">
+                                <h3 className="font-serif text-[26px] font-semibold text-ink tracking-[-0.01em] leading-[1.1] capitalize">
+                                    {wordInfo.word}
+                                </h3>
 
-                                    {(wordInfo.phoneticUK || wordInfo.phoneticUS) && (
-                                        <div className="flex items-center gap-3 mt-1.5">
-                                            {wordInfo.phoneticUK && (
-                                                <span className="font-sans text-[10px] text-ink/40">
-                                                    <span className="font-semibold tracking-wider uppercase text-ink/30 mr-1">uk</span>
-                                                    <span className="font-serif italic text-[11px] text-ink/45">{wordInfo.phoneticUK}</span>
-                                                </span>
-                                            )}
-                                            {wordInfo.phoneticUS && (
-                                                <span className="font-sans text-[10px] text-ink/40">
-                                                    <span className="font-semibold tracking-wider uppercase text-ink/30 mr-1">us</span>
-                                                    <span className="font-serif italic text-[11px] text-ink/45">{wordInfo.phoneticUS}</span>
-                                                </span>
-                                            )}
-                                        </div>
-                                    )}
+                                {(wordInfo.phoneticUK || wordInfo.phoneticUS) && (
+                                    <div className="flex items-center gap-3 mt-1.5">
+                                        {wordInfo.phoneticUK && (
+                                            <span className="font-sans text-[10px] text-ink/40">
+                                                <span className="font-semibold tracking-wider uppercase text-ink/30 mr-1">uk</span>
+                                                <span className="font-serif italic text-[11px] text-ink/45">{wordInfo.phoneticUK}</span>
+                                            </span>
+                                        )}
+                                        {wordInfo.phoneticUS && (
+                                            <span className="font-sans text-[10px] text-ink/40">
+                                                <span className="font-semibold tracking-wider uppercase text-ink/30 mr-1">us</span>
+                                                <span className="font-serif italic text-[11px] text-ink/45">{wordInfo.phoneticUS}</span>
+                                            </span>
+                                        )}
+                                    </div>
+                                )}
 
-                                    <p className="font-sans text-[12px] text-ink/55 leading-[1.6] mt-2 tracking-[0.01em]">
-                                        {wordInfo.definition}
-                                    </p>
-                                </div>
-
-                                {/* Actions */}
-                                <div className="flex items-center gap-1.5 shrink-0 pt-1.5 opacity-40 group-hover:opacity-100 transition-opacity duration-200">
-                                    {wordInfo.audioUrl && (
-                                        <button
-                                            onClick={() => playAudio(wordInfo.audioUrl)}
-                                            className="w-8 h-8 rounded-lg border border-ink/20 flex items-center justify-center
-                                                       text-ink/60 hover:bg-ink hover:text-paper hover:border-ink
-                                                       transition-all duration-200 active:scale-90"
-                                            aria-label="Play pronunciation"
-                                            title="Play pronunciation"
-                                        >
-                                            <Volume2 size={14} strokeWidth={2} />
-                                        </button>
-                                    )}
-                                    <button
-                                        onClick={(e) => handleDelete(e, wordInfo.id)}
-                                        className="w-8 h-8 rounded-lg border border-danger/20 flex items-center justify-center
-                                                   text-danger/60 hover:bg-danger hover:text-paper hover:border-danger
-                                                   transition-all duration-200 active:scale-90"
-                                        aria-label="Delete word"
-                                        title="Delete word"
-                                    >
-                                        <Trash2 size={13} strokeWidth={2} />
-                                    </button>
-                                </div>
+                                <p className="font-sans text-[12px] text-ink/55 leading-[1.6] mt-2 tracking-[0.01em]">
+                                    {wordInfo.definition}
+                                </p>
                             </div>
-                        </motion.div>
-                    ))}
-                </AnimatePresence>
+
+                            {/* Actions */}
+                            <div className="flex items-center gap-1.5 shrink-0 pt-1.5 opacity-40 group-hover:opacity-100 transition-opacity duration-200">
+                                {wordInfo.audioUrl && (
+                                    <button
+                                        onClick={() => playAudio(wordInfo.audioUrl)}
+                                        className="w-8 h-8 rounded-lg border border-ink/20 flex items-center justify-center
+                                                   text-ink/60 hover:bg-ink hover:text-paper hover:border-ink
+                                                   transition-all duration-200 active:scale-90"
+                                        aria-label="Play pronunciation"
+                                        title="Play pronunciation"
+                                    >
+                                        <Volume2 size={14} strokeWidth={2} />
+                                    </button>
+                                )}
+                                <button
+                                    onClick={(e) => handleDelete(e, wordInfo.id)}
+                                    className="w-8 h-8 rounded-lg border border-danger/20 flex items-center justify-center
+                                               text-danger/60 hover:bg-danger hover:text-paper hover:border-danger
+                                               transition-all duration-200 active:scale-90"
+                                    aria-label="Delete word"
+                                    title="Delete word"
+                                >
+                                    <Trash2 size={13} strokeWidth={2} />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     );

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDictionaryStore } from '../lib/store';
 import type { WordEntry } from '../lib/store';
-import { motion } from 'framer-motion';
 
 export function PracticeTab() {
     const words = useDictionaryStore(state => state.words);
@@ -98,27 +97,21 @@ export function PracticeTab() {
                         }
 
                         return (
-                            <motion.button
+                            <button
                                 key={opt}
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: i * 0.1 }}
                                 disabled={!!selected}
                                 onClick={() => handleSelect(opt)}
-                                className={`p-3 text-left font-sans text-sm font-bold tracking-widest uppercase border transition-all duration-200 ease-out ${btnClass}`}
+                                className={`p-3 text-left font-sans text-sm font-bold tracking-widest uppercase border transition-all duration-200 ease-out animate-slide-in-left ${btnClass}`}
+                                style={{ animationDelay: `${i * 100}ms` }}
                             >
                                 {opt}
-                            </motion.button>
+                            </button>
                         );
                     })}
                 </div>
 
                 {selected && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="absolute bottom-5 left-5 right-5 flex justify-center z-20"
-                    >
+                    <div className="absolute bottom-5 left-5 right-5 flex justify-center z-20 animate-slide-up">
                         <button
                             onClick={generateQuestion}
                             className="bg-ink text-paper px-6 py-4 font-sans text-xs font-bold tracking-[0.2em] uppercase hover:bg-paper hover:text-ink border border-ink transition-colors duration-200 ease-out w-full flex items-center justify-between"
@@ -126,7 +119,7 @@ export function PracticeTab() {
                             <span>Next Question</span>
                             <span>→</span>
                         </button>
-                    </motion.div>
+                    </div>
                 )}
             </div>
         </div>

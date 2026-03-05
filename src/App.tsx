@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { ExploreTab } from './components/ExploreTab';
-import { PracticeTab } from './components/PracticeTab';
-import { SettingsTab } from './components/SettingsTab';
 import { useDictionaryStore } from './lib/store';
 import { auth } from './lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import clsx from 'clsx';
-import { motion, AnimatePresence } from 'framer-motion';
+
+// Lazy-load non-default tabs (only loaded when user navigates to them)
+const PracticeTab = lazy(() => import('./components/PracticeTab').then(m => ({ default: m.PracticeTab })));
+const SettingsTab = lazy(() => import('./components/SettingsTab').then(m => ({ default: m.SettingsTab })));
 
 function App() {
   const [activeTab, setActiveTab] = useState<'explore' | 'practice' | 'settings'>('explore');
@@ -36,20 +37,17 @@ function App() {
 
       {/* Main Content Area */}
       <main className="flex-1 overflow-hidden relative bg-paper @container">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="h-full absolute inset-0"
-          >
+        <div key={activeTab} className="h-full absolute inset-0 animate-fade-in">
+          <Suspense fallback={
+            <div className="flex items-center justify-center h-full">
+              <span className="font-sans text-tiny text-ink/40 uppercase tracking-widest">Loading…</span>
+            </div>
+          }>
             {activeTab === 'explore' && <ExploreTab />}
             {activeTab === 'practice' && <PracticeTab />}
             {activeTab === 'settings' && <SettingsTab />}
-          </motion.div>
-        </AnimatePresence>
+          </Suspense>
+        </div>
       </main>
 
       {/* Bottom Navigation */}

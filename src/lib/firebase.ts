@@ -1,8 +1,7 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithCredential, signOut } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { initializeApp, type FirebaseApp } from 'firebase/app';
+import { getAuth, GoogleAuthProvider, signInWithCredential, signOut, type Auth } from 'firebase/auth';
+import { getFirestore, type Firestore } from 'firebase/firestore';
 
-// TODO: Replace with your actual Firebase config
 const firebaseConfig = {
     apiKey: "AIzaSyAyxIAFT5zZoocX0sPjmMex6AvQBlZbVz0",
     authDomain: "personal-dictionary-2c7ed.firebaseapp.com",
@@ -13,22 +12,37 @@ const firebaseConfig = {
     measurementId: "G-SQ46L8YN58"
 };
 
+// Lazy singletons — Firebase SDK is only initialized on first access
+let _app: FirebaseApp | null = null;
+let _auth: Auth | null = null;
+let _db: Firestore | null = null;
 
-// Log config for configuration debugging (careful not to expose too much in prod, but helpful in dev)
-console.log('[FIREBASE INIT] Env keys detected keys:', {
-    apiKeyLength: firebaseConfig.apiKey ? firebaseConfig.apiKey.length : 0,
-    hasAuthDomain: !!firebaseConfig.authDomain,
-    hasProjectId: !!firebaseConfig.projectId,
-});
-
-if (!firebaseConfig.apiKey) {
-    console.error('[FIREBASE INIT ERROR] Missing apiKey. Ensure standard .env loading in Vite.');
+function getApp(): FirebaseApp | null {
+    if (!firebaseConfig.apiKey) return null;
+    if (!_app) {
+        _app = initializeApp(firebaseConfig);
+    }
+    return _app;
 }
 
-// Initialize Firebase only if the API key config actually loaded
-const app = firebaseConfig.apiKey ? initializeApp(firebaseConfig) : null;
-const auth = app ? getAuth(app) : null;
-const db = app ? getFirestore(app) : null;
+// Exported as getters so Firebase modules initialize lazily
+const auth: Auth | null = (() => {
+    // We need auth eagerly for onAuthStateChanged in App.tsx,
+    // but only if the config is valid
+    const app = getApp();
+    if (!app) return null;
+    if (!_auth) _auth = getAuth(app);
+    return _auth;
+})();
+
+// Firestore is only needed when user is logged in — true lazy init
+function getDb(): Firestore | null {
+    const app = getApp();
+    if (!app) return null;
+    if (!_db) _db = getFirestore(app);
+    return _db;
+}
+
 const googleProvider = new GoogleAuthProvider();
 
-export { app, auth, db, googleProvider, signInWithCredential, signOut };
+export { auth, getDb, googleProvider, signInWithCredential, signOut };
