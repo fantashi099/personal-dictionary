@@ -3,14 +3,18 @@
   "name": "Personal Dictionary",
   "version": "1.0.0",
   "description": "Instantly save words, hear their pronunciations, and playfully memorize them.",
-  "icons": {
-    "16": "icon.png",
-    "32": "icon.png",
-    "48": "icon.png",
-    "128": "icon.png"
-  },
   "action": {
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    },
     "default_popup": "index.html"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
   },
   "oauth2": {
     "client_id": "968925212501-k3r9pu80s3okq5ba6e4p3i12cngfmkk6.apps.googleusercontent.com",
