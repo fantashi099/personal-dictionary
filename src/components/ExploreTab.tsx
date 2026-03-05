@@ -1,5 +1,6 @@
 import { useDictionaryStore } from '../lib/store';
 import { motion } from 'framer-motion';
+import { Trash2 } from 'lucide-react';
 
 export function ExploreTab() {
     const words = useDictionaryStore(state => state.words);
@@ -8,6 +9,13 @@ export function ExploreTab() {
         if (url) {
             new Audio(url).play();
         }
+    };
+
+    const deleteWord = useDictionaryStore(state => state.deleteWord);
+
+    const handleDelete = (e: React.MouseEvent, id: string) => {
+        e.stopPropagation();
+        deleteWord(id);
     };
 
     if (words.length === 0) {
@@ -43,15 +51,25 @@ export function ExploreTab() {
                             {wordInfo.definition}
                         </p>
                     </div>
-                    {wordInfo.audioUrl && (
+                    <div className="flex gap-2 shrink-0 items-center">
+                        {wordInfo.audioUrl && (
+                            <button
+                                onClick={() => playAudio(wordInfo.audioUrl)}
+                                className="font-sans text-micro font-bold tracking-[0.2em] uppercase border border-ink px-4 py-1.5 hover:bg-ink hover:text-paper hover:shadow-brutal transition-all duration-200 ease-out text-center"
+                                aria-label="Play pronunciation"
+                            >
+                                Play
+                            </button>
+                        )}
                         <button
-                            onClick={() => playAudio(wordInfo.audioUrl)}
-                            className="font-sans text-micro font-bold tracking-[0.2em] uppercase border border-ink px-3 py-1.5 hover:bg-ink hover:text-paper transition-colors shrink-0"
-                            aria-label="Play pronunciation"
+                            onClick={(e) => handleDelete(e, wordInfo.id)}
+                            className="border border-danger/40 text-danger hover:bg-danger hover:border-danger hover:text-paper hover:shadow-brutal transition-all duration-200 ease-out p-1.5 flex justify-center items-center group"
+                            aria-label="Delete word"
+                            title="Delete word"
                         >
-                            Play
+                            <Trash2 size={14} strokeWidth={2.5} className="group-hover:animate-bounce" />
                         </button>
-                    )}
+                    </div>
                 </motion.div>
             ))}
         </div>

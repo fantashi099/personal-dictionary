@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { db } from './firebase';
-import { collection, getDocs, query, orderBy, setDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, setDoc, doc, deleteDoc } from 'firebase/firestore';
 import type { User } from 'firebase/auth';
 
 export interface WordEntry {
@@ -20,6 +20,7 @@ interface DictionaryState {
     setUser: (user: User | null) => void;
     loadWords: () => Promise<void>;
     addWord: (word: WordEntry) => Promise<void>;
+    deleteWord: (id: string) => Promise<void>;
 }
 
 export const useDictionaryStore = create<DictionaryState>((set, get) => ({
@@ -102,6 +103,25 @@ export const useDictionaryStore = create<DictionaryState>((set, get) => ({
                 await setDoc(doc(db!, `users/${user.uid}/words`, word.id), word);
             } catch (error) {
                 console.error("Error saving to Firestore:", error);
+            }
+        }
+    },
+
+    deleteWord: async (id: string) => {
+        const user = get().user;
+
+        // 1. Remove locally
+        const currentWords = get().words;
+        const newWords = currentWords.filter(w => w.id !== id);
+        set({ words: newWords });
+        chrome.storage.local.set({ words: newWords });
+
+        // 2. Remove from Firestore if logged in
+        if (user && db) {
+            try {
+                await deleteDoc(doc(db!, `users/${user.uid}/words`, id));
+            } catch (error) {
+                console.error("Error deleting from Firestore:", error);
             }
         }
     }
