@@ -14,7 +14,7 @@ export function SettingsTab() {
             const token = typeof tokenResponse === 'string' ? tokenResponse : (tokenResponse as { token?: string })?.token;
             if (chrome.runtime.lastError || !token) {
                 console.error("Chrome Identity Error:", chrome.runtime.lastError);
-                alert("Authentication failed! Ensure your manifest.json has a valid oauth2 client_id configured from Google Cloud Console.");
+                alert("Sign-in failed. Please try again.");
                 return;
             }
 
@@ -23,7 +23,7 @@ export function SettingsTab() {
                 await signInWithCredential(currentAuth, credential);
             } catch (err) {
                 console.error("Firebase auth error:", err);
-                alert("Firebase auth failed: " + (err as Error).message);
+                alert("Sign-in failed. Please try again.");
             }
         });
     };

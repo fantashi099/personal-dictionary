@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 
 tmp
+
+# Test and build artifacts
+test.json
+*.zip

@@ -33,6 +33,6 @@
     "identity"
   ],
   "host_permissions": [
-    "<all_urls>"
+    "https://api.dictionaryapi.dev/*"
   ]
 }

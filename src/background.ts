@@ -24,8 +24,14 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
             const data = await res.json();
 
             const entry = data[0];
-            const definition = entry.meanings[0]?.definitions[0]?.definition || "No definition found";
-            const audioUrl = entry.phonetics.find((p: { audio?: string }) => p.audio)?.audio || "";
+            let definition = entry.meanings[0]?.definitions[0]?.definition || "No definition found";
+            // P4: Validate and sanitize API response
+            if (typeof definition !== 'string' || definition.length > 2000) {
+                definition = "No definition found";
+            }
+            const rawAudioUrl = entry.phonetics.find((p: { audio?: string }) => p.audio)?.audio || "";
+            // P4: Only allow audio URLs from the trusted dictionary API domain
+            const audioUrl = rawAudioUrl.startsWith('https://api.dictionaryapi.dev/') ? rawAudioUrl : "";
 
             let phoneticUK = "";
             let phoneticUS = "";
@@ -53,7 +59,7 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
             }
 
             const newWord = {
-                id: Date.now().toString(),
+                id: crypto.randomUUID(),
                 word,
                 definition,
                 audioUrl,
