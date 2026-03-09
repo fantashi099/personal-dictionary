@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { getDb } from './firebase';
 import { collection, getDocs, query, orderBy, setDoc, doc, deleteDoc } from 'firebase/firestore';
-import type { User } from 'firebase/auth';
+import type { User } from 'firebase/auth/web-extension';
 
 export interface WordEntry {
     id: string;
@@ -21,6 +21,8 @@ interface DictionaryState {
     loadWords: () => Promise<void>;
     addWord: (word: WordEntry) => Promise<void>;
     deleteWord: (id: string) => Promise<void>;
+    searchQuery: string;
+    setSearchQuery: (query: string) => void;
 }
 
 export const useDictionaryStore = create<DictionaryState>((set, get) => {
@@ -35,6 +37,8 @@ export const useDictionaryStore = create<DictionaryState>((set, get) => {
         words: [],
         user: null,
         loading: true, // Start true — we're loading cached words
+        searchQuery: '',
+        setSearchQuery: (searchQuery) => set({ searchQuery }),
 
         setUser: (user) => {
             set({ user });

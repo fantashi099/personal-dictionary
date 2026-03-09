@@ -16,13 +16,23 @@ export function ExploreTab() {
     const deleteWord = useDictionaryStore(state => state.deleteWord);
     const [sortMode, setSortMode] = useState<SortMode>('latest');
     const [shuffledIds, setShuffledIds] = useState<string[]>([]);
+    const searchQuery = useDictionaryStore(state => state.searchQuery);
 
     const sortedWords = useMemo(() => {
+        let filtered = words;
+        if (searchQuery.trim()) {
+            const query = searchQuery.toLowerCase();
+            filtered = words.filter(w =>
+                w.word.toLowerCase().includes(query) ||
+                w.definition.toLowerCase().includes(query)
+            );
+        }
+
         switch (sortMode) {
             case 'oldest':
-                return [...words].sort((a, b) => a.createdAt - b.createdAt);
+                return [...filtered].sort((a, b) => a.createdAt - b.createdAt);
             case 'shuffle':
-                return [...words].sort((a, b) => {
+                return [...filtered].sort((a, b) => {
                     const idxA = shuffledIds.indexOf(a.id);
                     const idxB = shuffledIds.indexOf(b.id);
                     if (idxA === -1) return 1;
@@ -31,9 +41,9 @@ export function ExploreTab() {
                 });
             case 'latest':
             default:
-                return [...words];
+                return [...filtered];
         }
-    }, [words, sortMode, shuffledIds]);
+    }, [words, sortMode, shuffledIds, searchQuery]);
 
     const playAudio = (url: string) => {
         if (url) new Audio(url).play();
@@ -81,35 +91,45 @@ export function ExploreTab() {
     }
 
     return (
-        <div className="flex flex-col h-full bg-paper">
-            {/* ── Sort Toolbar ── */}
-            <div className="flex items-center justify-between px-5 py-3 border-b border-ink/15 shrink-0 bg-paper">
-                <span className="font-sans text-[11px] tracking-[0.15em] uppercase text-ink/60 font-medium">
+        <div className="flex flex-col h-full bg-paper relative">
+            {/* ── Toolbar: Sort ── */}
+            <div className="flex items-center justify-between px-5 py-3 border-b-2 border-ink shrink-0 bg-paper sticky top-0 z-20">
+                <span className="font-sans text-[11px] tracking-[0.15em] uppercase text-ink/60 font-bold whitespace-nowrap">
                     {words.length} {words.length === 1 ? 'word' : 'words'}
                 </span>
-                <div className="flex items-center bg-ink/[0.04] rounded-lg p-0.5 gap-0.5">
-                    {SORT_OPTIONS.map(({ mode, label, Icon }) => (
-                        <button
-                            key={mode}
-                            onClick={() => handleSortChange(mode)}
-                            className={`
+
+                <div className="flex items-center gap-2">
+                    {/* Sort Options */}
+                    <div className="flex items-center bg-ink/[0.04] p-0.5 gap-0.5">
+                        {SORT_OPTIONS.map(({ mode, label, Icon }) => (
+                            <button
+                                key={mode}
+                                onClick={() => handleSortChange(mode)}
+                                className={`
                                 flex items-center gap-1.5 px-2.5 py-1.5 rounded-md font-sans text-[10px]
                                 font-semibold tracking-wider uppercase transition-all duration-200
                                 ${sortMode === mode
-                                    ? 'bg-ink text-paper shadow-sm'
-                                    : 'text-ink/60 hover:text-ink/90 hover:bg-ink/[0.06]'
-                                }
+                                        ? 'bg-ink text-paper shadow-sm'
+                                        : 'text-ink/60 hover:text-ink/90 hover:bg-ink/[0.06]'
+                                    }
                             `}
-                        >
-                            <Icon size={12} strokeWidth={2.5} />
-                            {label}
-                        </button>
-                    ))}
+                            >
+                                <Icon size={12} strokeWidth={2.5} />
+                                {label}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
 
             {/* ── Word List ── */}
             <div className="flex flex-col overflow-y-auto flex-1 pb-20 overflow-x-hidden">
+                {sortedWords.length === 0 && searchQuery.trim() !== '' && (
+                    <div className="flex flex-col items-center justify-center p-10 text-center mt-10">
+                        <p className="font-serif italic text-lg text-ink/60">No matching words</p>
+                        <p className="font-sans text-[12px] text-ink/40 mt-1">Try a different search term</p>
+                    </div>
+                )}
                 {sortedWords.map((wordInfo, index) => (
                     <div
                         key={wordInfo.id}

@@ -1,5 +1,5 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithCredential, signOut, type Auth } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithCredential, signOut, type Auth } from 'firebase/auth/web-extension';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 
 const firebaseConfig = {

@@ -1,6 +1,6 @@
 import { useDictionaryStore } from '../lib/store';
 import { auth, signInWithCredential, signOut } from '../lib/firebase';
-import { GoogleAuthProvider } from 'firebase/auth';
+import { GoogleAuthProvider } from 'firebase/auth/web-extension';
 
 export function SettingsTab() {
     const user = useDictionaryStore(state => state.user);
